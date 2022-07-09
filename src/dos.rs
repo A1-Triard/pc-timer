@@ -41,7 +41,7 @@ unsafe extern "C" fn int_8_handler_entry() {
 
 unsafe extern "C" fn int_8_handler(bios_int_handler: *mut u32) -> u8 {
     DATA.ticks = DATA.ticks.wrapping_add(DATA.ticks_per_int as u64);
-    DATA.ticks_mod_10000 = DATA.ticks_mod_10000 + DATA.ticks_per_int;
+    DATA.ticks_mod_10000 += DATA.ticks_per_int;
     *bios_int_handler = DATA.bios_int_handler;
     if DATA.ticks_mod_10000 >= 10000 {
         DATA.ticks_mod_10000 -= 10000;
@@ -98,9 +98,8 @@ pub unsafe fn done() {
 }
 
 pub unsafe fn ticks() -> u64 {
-    let ticks;
     asm! { "cli" }
-    ticks = DATA.ticks;
+    let ticks = DATA.ticks;
     asm! { "sti" }
     ticks
 }
