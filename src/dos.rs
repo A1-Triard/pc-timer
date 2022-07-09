@@ -2,6 +2,61 @@ use core::arch::asm;
 use core::mem::size_of;
 use pc_ints::*;
 
+struct Data {
+    ticks: u64,
+    ticks_mod_10000: u16,
+    ticks_per_int: u16,
+    bios_int_handler: u32,
+}
+
+static mut DATA: Data = Data {
+    ticks: 0,
+    ticks_mod_10000: 0,
+    ticks_per_int: 0,
+    bios_int_handler: 0,
+};
+
+#[naked]
+unsafe extern "C" fn int_8_handler_entry() {
+    asm! {
+        "pushad",
+        "sub esp, 4",
+        "push esp",
+        "call {int_8_handler}",
+        "add esp, 4",
+        "pop edx",
+        "xor ebx, ebx",
+        "or eax, ebx",
+        "jz 1f",
+        "call edx",
+        "jmp 2f",
+        "1: mov al, 0x20",
+        "out 0x20, al",
+        "2: popad",
+        "iretd",
+        int_8_handler = sym int_8_handler,
+        options(noreturn)
+    }
+}
+
+unsafe extern "C" fn int_8_handler(bios_int_handler: *mut u32) -> u8 {
+    DATA.ticks = DATA.ticks.wrapping_add(DATA.ticks_per_int as u64);
+    DATA.ticks_mod_10000 = DATA.ticks_mod_10000 + DATA.ticks_per_int;
+    *bios_int_handler = DATA.bios_int_handler;
+    if DATA.ticks_mod_10000 >= 10000 {
+        DATA.ticks_mod_10000 -= 10000;
+        debug_assert!(DATA.ticks_mod_10000 < 10000);
+        1
+    } else {
+        0
+    }
+}
+
+fn p32<T>(ptr: *const T) -> u32 {
+    assert!(size_of::<usize>() == size_of::<u32>());
+    ptr as usize as u32
+}
+
 pub unsafe fn init(frequency: u16) {
     let ticks_per_int = (0x1234DDu32 / frequency as u32).try_into().ok().filter(|&x| x < 10000)
         .expect("frequency >= 120");
@@ -14,9 +69,7 @@ pub unsafe fn init(frequency: u16) {
     asm! {
         "out 0x43, al",
         in ("eax") 0x34u32
-    }
-    asm! {
-        "out 0x40, al",
+    } asm! { "out 0x40, al",
         in ("eax") ticks_per_int as u8 as u32,
     }
     asm! {
