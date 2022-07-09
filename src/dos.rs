@@ -3,14 +3,14 @@ use core::mem::size_of;
 use pc_ints::*;
 
 struct Data {
-    ticks: u64,
+    ints: u64,
     ticks_mod_10000: u16,
     ticks_per_int: u16,
     bios_int_handler: u32,
 }
 
 static mut DATA: Data = Data {
-    ticks: 0,
+    ints: 0,
     ticks_mod_10000: 0,
     ticks_per_int: 0,
     bios_int_handler: 0,
@@ -40,7 +40,7 @@ unsafe extern "C" fn int_8_handler_entry() {
 }
 
 unsafe extern "C" fn int_8_handler(bios_int_handler: *mut u32) -> u8 {
-    DATA.ticks = DATA.ticks.wrapping_add(DATA.ticks_per_int as u64);
+    DATA.ints = DATA.ints.wrapping_add(1);
     DATA.ticks_mod_10000 += DATA.ticks_per_int;
     *bios_int_handler = DATA.bios_int_handler;
     if DATA.ticks_mod_10000 >= 10000 {
@@ -61,7 +61,7 @@ pub unsafe fn init(frequency: u16) {
     let ticks_per_int = (0x1234DDu32 / frequency as u32).try_into().ok().filter(|&x| x < 10000)
         .expect("frequency >= 120");
     asm! { "cli" }
-    DATA.ticks = 0;
+    DATA.ints = 0;
     DATA.ticks_mod_10000 = 0;
     DATA.bios_int_handler = int_21h_ah_35h_get_int(8).ebx_int_handler;
     DATA.ticks_per_int = ticks_per_int;
@@ -99,7 +99,7 @@ pub unsafe fn done() {
 
 pub unsafe fn ticks() -> u64 {
     asm! { "cli" }
-    let ticks = DATA.ticks;
+    let ticks = DATA.ints;
     asm! { "sti" }
     ticks
 }
