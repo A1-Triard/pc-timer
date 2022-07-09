@@ -1,3 +1,7 @@
+use core::arch::asm;
+use core::mem::size_of;
+use pc_ints::*;
+
 pub unsafe fn init(frequency: u16) {
     let ticks_per_int = (0x1234DDu32 / frequency as u32).try_into().ok().filter(|&x| x < 10000)
         .expect("frequency >= 120");
