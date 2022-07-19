@@ -33,7 +33,7 @@ unsafe extern "C" fn int_8_handler_entry() {
         "1: mov al, 0x20",
         "out 0x20, al",
         "2: popad",
-        "iretd",
+        "iret",
         int_8_handler = sym int_8_handler,
         options(noreturn)
     }
