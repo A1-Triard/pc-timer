@@ -1,5 +1,4 @@
 #![feature(asm_const)]
-#![feature(asm_sym)]
 #![feature(naked_functions)]
 
 #![deny(warnings)]
