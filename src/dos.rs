@@ -66,7 +66,7 @@ pub unsafe fn init(frequency: u16) {
         "out 0x40, al",
         in ("ax") (low_level_ticks_per_tick >> 8) as u8 as u16
     }
-    asm! { "sti" }
+    asm! { "sti", "nop" }
     loop {
         if ptr::read_volatile((irq_0_handler_addr + 0x0010) as *const u8) != 0 { break; }
     }
@@ -76,7 +76,7 @@ pub unsafe fn init(frequency: u16) {
 pub unsafe fn ticks() -> u64 {
     asm! { "cli" }
     let ticks = *TICKS;
-    asm! { "sti" }
+    asm! { "sti", "nop" }
     ticks
 }
 
@@ -98,5 +98,5 @@ pub unsafe fn done() {
         "out 0x40, al",
         in ("ax") 0u16
     }
-    asm! { "sti" }
+    asm! { "sti", "nop" }
 }
