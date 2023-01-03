@@ -1,0 +1,31 @@
+00 00 00 00 00 00 00 00
+00 00
+00 00
+00 00
+9c                   	pushf
+1e                   	push   %ds
+53                   	push   %bx
+50                   	push   %ax
+8c c8                	mov    %cs,%ax
+8e d8                	mov    %ax,%ds
+c6 06 63 02 01       	movb   $0x1,0x263
+bb 57 02             	mov    $0x257,%bx
+83 07 01             	addw   $0x1,(%bx)
+83 57 02 00          	adcw   $0x0,0x2(%bx)
+83 57 04 00          	adcw   $0x0,0x4(%bx)
+83 57 06 00          	adcw   $0x0,0x6(%bx)
+a1 5f 02             	mov    0x25f,%ax
+01 06 61 02          	add    %ax,0x261
+73 09                	jae    0x195
+58                   	pop    %ax
+5b                   	pop    %bx
+1f                   	pop    %ds
+9d                   	popf
+ea 00 00 00 00       	ljmp   $0x0,$0x0
+b0 20                	mov    $0x20,%al
+e6 20                	out    %al,$0x20
+58                   	pop    %ax
+5b                   	pop    %bx
+1f                   	pop    %ds
+9d                   	popf
+cf                   	iret
