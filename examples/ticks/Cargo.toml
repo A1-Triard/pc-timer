@@ -1,0 +1,27 @@
+[package]
+edition = "2021"
+name = "ticks"
+version = "0.0.0"
+publish = false
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "z"
+panic = "abort"
+strip = true
+
+[dependencies]
+dos-cp = "0.2.1"
+dos-errno-and-panic = "0.0.1"
+exit-no-std = "0.1.4"
+panicking = { version = "0.4.0", default-features = false, features = ["abort"] }
+pc-atomics = "0.0.1"
+pc-timer = { path = "../.." }
+rlibc = "1.0.0"
+
+[build-dependencies]
+dos-cp-generator = "0.2.1"
