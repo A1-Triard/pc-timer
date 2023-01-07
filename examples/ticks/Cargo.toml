@@ -15,7 +15,7 @@ panic = "abort"
 strip = true
 
 [dependencies]
-dos-cp = "0.3.1"
+dos-cp = "0.3.0"
 dos-errno-and-panic = "0.0.3"
 exit-no-std = "0.2.0"
 panicking = { version = "0.4.0", default-features = false, features = ["abort"] }
