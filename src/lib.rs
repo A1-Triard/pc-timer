@@ -26,7 +26,7 @@ impl Timer {
     /// # Safety
     ///
     /// This function may not be called while another [`Timer`] instance is alive.
-    /// Also, it should be guaranteed that it is executing on an effectively single-core processor.
+    /// Also, it should be guaranteed that it is compiled for an effectively single-core processor.
     pub unsafe fn new(frequency: u16) -> Timer {
         init(frequency);
         Timer(())
