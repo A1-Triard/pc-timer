@@ -1,5 +1,5 @@
 use core::arch::asm;
-use core::mem::{replace, size_of};
+use core::mem::size_of;
 use core::ptr::{self, null};
 use pc_ints::*;
 
@@ -82,7 +82,7 @@ pub unsafe fn ticks() -> u64 {
 
 pub unsafe fn done() {
     asm! { "cli" }
-    let irq_0_handler_addr = replace(&mut TICKS, null()) as usize;
+    let irq_0_handler_addr = ptr::replace(ptr::addr_of_mut!(TICKS), null()) as usize;
     let bios_handler_offset = ptr::read_unaligned((irq_0_handler_addr + 0x003A) as *mut u16);
     let bios_handler_segment = ptr::read_unaligned((irq_0_handler_addr + 0x003A + 2) as *mut u16);
     int_31h_ax_0201h_set_rm_int(8, bios_handler_segment, bios_handler_offset);
