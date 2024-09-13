@@ -1,8 +1,8 @@
 [package]
 edition = "2021"
 name = "pc-timer"
-version = "0.1.7"
-#rust-version = "nightly"
+version = "0.1.8"
+rust-version = "1.82"
 authors = ["warlock <internalmike@gmail.com>"]
 description = "Intel 8253 programming-based timer."
 readme = "README.md"
@@ -12,8 +12,11 @@ categories = ["os", "no-std"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/A1-Triard/pc-timer"
 
+[lints.rust]
+unexpected_cfgs = { level = "allow" }
+
 [dependencies]
-pc-ints = "0.3.0"
+pc-ints = "0.3.5"
 
 [badges]
 maintenance = { status = "experimental" }
