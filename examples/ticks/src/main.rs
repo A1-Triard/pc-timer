@@ -13,19 +13,16 @@ mod no_std {
     fn panic_handler(info: &core::panic::PanicInfo) -> ! { panic_no_std::panic(info, b'P') }
 }
 
-extern {
-    type PEB;
-}
-
 use dos_cp::println;
+use exit_no_std::exit;
 use pc_timer::Timer;
 
 #[allow(non_snake_case)]
 #[no_mangle]
-extern "stdcall" fn mainCRTStartup(_: *const PEB) -> u64 {
+extern "C" fn mainCRTStartup() -> ! {
     let timer = unsafe { Timer::new(125) };
     for _ in 0 .. 1000 {
         println!("{}", timer.ticks());
     }
-    0
+    exit(0)
 }
