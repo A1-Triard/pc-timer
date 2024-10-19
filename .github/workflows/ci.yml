@@ -88,5 +88,9 @@ jobs:
       working-directory: examples/ticks
     - run: "make clippy"
       working-directory: examples/ticks
+    - name: remove Cargo.lock
+      uses: JesseTG/rm@v1.0.3
+      with:
+        path: examples/ticks/Cargo.lock
     - run: "cargo outdated --verbose --root-deps-only --exit-code 1"
       working-directory: examples/ticks
